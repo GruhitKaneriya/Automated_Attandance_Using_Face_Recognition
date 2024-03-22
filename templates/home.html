@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Portal</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        background-image: url('{{ url_for('static', filename='ub2final.jpg') }}');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative; /* To position the logo */
+        }
+
+        .container {
+            width: 500px; /* Adjust the width as needed */
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8); /* Adjust the opacity as needed */
+            padding: 40px 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            position: relative; /* To ensure the logo doesn't overlap */
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px; /* Adjust the font size as needed */
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Logo Styles */
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 120px; /* Adjust the width of the logo as needed */
+        }
+    </style>
+</head>
+<body>
+<img src="{{ url_for('static', filename='Srmseal.png') }}" alt="SRM University Logo" class="logo">
+<div class="container">
+    <h1>Welcome to Attendance Portal</h1>
+    <p>Please select your role:</p>
+    <div class="options">
+        <a href="{{ url_for('login') }}" class="btn">Teacher Login</a>
+        <a href="{{ url_for('student_login') }}" class="btn">Student Login</a>
+    </div>
+</div>
+</body>
+</html>

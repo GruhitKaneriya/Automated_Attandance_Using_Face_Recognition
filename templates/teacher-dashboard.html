@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 120px;
+            z-index: 1;
+        }
+
+        .teacher-photo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 150px; /* Adjust as needed */
+        }
+
+        p {
+            text-align: center;
+            margin-top: 10px; /* Adjust as needed */
+        }
+
+        h2 {
+            color: #555;
+            text-align: center;
+            margin-top: 30px; /* Adjust as needed */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .start-attendance-btn {
+            display: block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .start-attendance-btn:hover {
+            background-color: #45a049;
+        }
+
+        .section-dropdown select {
+            width: 150px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+<img src="{{ url_for('static', filename='Srmseal.png') }}" alt="SRM University Logo" class="logo">
+<img src="{{ url_for('static', filename=teacher_id + '.jpg') }}" alt=" " class="teacher-photo">
+<img src="{{ url_for('static', filename=teacher_id + '.jpeg') }}" alt=" " class="teacher-photo">
+<h1>Welcome {{ teacher_name }}</h1>
+<p>Teacher ID: {{ teacher_id }}</p>
+<h2>Your Classes Are:</h2>
+<table border="1">
+    <tr>
+        <th>Subject ID</th>
+        <th>Subject Name</th>
+        <th>Sections</th>
+    </tr>
+    {% for section in teacher_sections %}
+    <tr>
+        <td>{{ section['subject_id'] }}</td>
+        <td>{{ section['subject_name'] }}</td>
+        <td>
+            <div class="section-dropdown">
+                <select id="sectionSelect_{{ loop.index }}">
+                    {% for i in range(1, 6) %}
+                    {% set section_key = 'section' ~ i %}
+                    {% if section[section_key] %}
+                    <option>{{ section[section_key] }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<button id="startAttendanceBtn" class="start-attendance-btn">Start Attendance</button>
+
+<p id="attendanceMessage" style="text-align: center;"></p>
+
+<script>
+    document.getElementById('startAttendanceBtn').addEventListener('click', function() {
+        var selectedSections = [];
+        var selectedSubjectId = "{{ teacher_sections[0]['subject_id'] }}"; // Get the subject ID from the first row
+        var dropdowns = document.querySelectorAll('.section-dropdown select');
+        dropdowns.forEach(function(dropdown) {
+            selectedSections.push(dropdown.value);
+        });
+        // Send an AJAX request to the Flask server to start attendance for selected sections
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/start-attendance", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+        xhr.send(JSON.stringify({subject_id: selectedSubjectId, sections: selectedSections}));
+
+        // Display starting attendance message
+        document.getElementById("attendanceMessage").innerHTML = "Starting attendance...";
+
+        // Update attendance message when camera window opens
+        setTimeout(function() {
+            document.getElementById("attendanceMessage").innerHTML = "Attendance started...";
+        }, 3000); // Adjust the timeout as needed, assuming camera window opens after 3 seconds
+
+        // Update attendance message when camera window closes
+        window.addEventListener("unload", function() {
+            document.getElementById("attendanceMessage").innerHTML = "Attendance recorded.";
+        });
+    });
+</script>
+
+</body>
+</html>
